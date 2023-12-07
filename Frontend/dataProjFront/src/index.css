@@ -1,0 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;600&family=Rubik+Bubbles&display=swap");
+
+:root {
+  margin: 0px;
+  color: azure;
+  background-color: #242424;
+  font-family: Rubik Bubbles;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0px;
+}
