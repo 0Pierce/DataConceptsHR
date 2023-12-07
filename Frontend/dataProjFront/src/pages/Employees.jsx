@@ -1,30 +1,36 @@
-import {React, useState, useEffect} from 'react'
+import {React, useState, useEffect, useMemo} from 'react'
 import "/src/styles/Employees.css"
 import Header from "/src/components/Header.jsx"
 import Footer from "/src/components/Footer.jsx"
 
 function Employees() {
-    const [backendData, setBackendData] = useState([{}])
+    
 
 
-  useEffect(() => {
-    fetch("/api").then(
-        response => response.json()
-    ).then(
-        data =>{
-            console.log("set Data")
-            setBackendData(data)
-        }
-    )
-  }, [])
+    const [jobIds, setJobIds] = useState([]);
+    const [jobTitles, setJobTitles] = useState([])
 
+    useEffect(() => {
+        const fetchJobIds = async () => {
+          try {
+            const response = await fetch('/api');
+            const data = await response.json();
+      
+            // Use Set to store unique job IDs
+            const uniqueJobIds = new Set(data.Employees.map(employee => employee.job_ID));
+      
+            // Convert Set back to an array
+            const uniqueJobIdsArray = [...uniqueJobIds];
+      
+            setJobIds(uniqueJobIdsArray);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+      
+        fetchJobIds();
+      }, []);
 
-  const getJobID = (JOB_ID) =>{
-    if(backendData.Employees && backendData.Employees.length > 0){
-        return Array.from(new Set(backendData.Employees.map((employee)=>employee[JOB_ID])));
-    }
-    return[];
-  }
 
   return (
     <>
@@ -50,20 +56,19 @@ function Employees() {
         <div className="jobDesc">
             <div className="jobID">
             <label htmlFor="JOB_ID">JOB ID</label>
-           <select name="JOB_ID" id="JOB_ID" required >
-           <option value="" disabled selected>Select Title</option>
-           {getJobID('EMPLOYEE_ID').map((id) => (
-                    <option key={id} value={id}>{id}</option>
-                  ))}
+           <select name="JOB_ID" id="JOB_ID" required  >
+           <option value="" disabled selected>Select Job ID</option>
+           {jobIds.map(jobId => <option key={jobId} value={jobId}>{jobId}</option>)}
            </select>
 
             </div>
            <div className="jobTitle">
             <label htmlFor="JOB_TITLE">JOB TITLE</label>
-             <select name="JOB TITLE" id="JOB_ID" required>
-             <option value="" disabled selected>Select Title</option>
+             <select name="JOB TITLE" id="JOB_TITLE" required>
+             <option value="" disabled selected>Select Manager ID</option>
              <option value="Q1">Q1</option>
              <option value="Q2">Q2</option>
+            
             </select>
 
            </div>
