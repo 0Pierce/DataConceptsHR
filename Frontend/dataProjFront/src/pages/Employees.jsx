@@ -131,6 +131,50 @@ function Employees() {
 
       }
 
+      const hireEmployee = async (formData) => {
+        try {
+          console.log("Fetching");
+          const response = await fetch("/api/hireEmployee", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+          console.log("Fetched");
+      
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+      
+          const data = await response.json();
+          console.log('Data:', data);
+      
+          console.log('Finished');
+        } catch (error) {
+          console.error("Error hiring employee:", error);
+        }
+      };
+    
+      const handleSubmit = (event) => {
+        event.preventDefault();
+    
+        const formData = {
+          p_first_name: document.getElementById("first_name").value,
+          p_last_name: document.getElementById("last_name").value,
+          p_email: document.getElementById("email2").value,
+          p_phone: document.getElementById("phone2").value,
+          p_hire_date: document.getElementById("hire_date").value,
+          p_salary: document.getElementById("salary2").value,
+          p_job_id: document.getElementById("JOB_ID").value,
+          p_manager_id: document.getElementById("EMPLOYEE_ID").value,
+          p_department_id: document.getElementById("DEPARTMENT_ID").value,
+        };
+    
+        
+        hireEmployee(formData);
+      };
+
   return (
     <>
    <Header/>
@@ -160,7 +204,7 @@ function Employees() {
               <label htmlFor="email">Email:</label>
               <div className="empField">
              
-              <input type="text" placeholder="Email" id='email' value={selectedEmployee?.email ?? 'Null'} />
+              <input type="email" placeholder="Email" id='email' value={selectedEmployee?.email ?? 'Null'} />
               <input type="text" name="" id="newEmail" placeholder='new Email' />
               </div>
               <label htmlFor="phone">Phone:</label>
@@ -187,14 +231,14 @@ function Employees() {
         <h2>Employee Hiring Form</h2>
         <div className="personalInfo">
             <div className="firstInf">
-                <input type="text" placeholder='First Name: ' required />
-                <input type="text" placeholder='Last Name:' required />
-                <input type="email" placeholder='Email: ' required />
+                <input type="text" id='first_name' placeholder='First Name: ' required />
+                <input type="text" id='last_name' placeholder='Last Name:' required />
+                <input type="email" id='email2' placeholder='Email: ' required />
             </div>
             <div className="secondInf">
-                <input type="number" placeholder='Phone:' required />
-                <input type="date" placeholder='Date:' required />
-                <input type="number" min="1" placeholder='$ Salary:' required />
+                <input type="number"id='phone2' placeholder='Phone:' required />
+                <input type="date" id='hire_date' placeholder='Date:' required />
+                <input type="number" id='salary2' min="1" placeholder='$ Salary:' required />
             </div>
         </div>
         <div className="jobDesc">
@@ -263,7 +307,7 @@ function Employees() {
             </select>
             </div>
         </div>
-        <div className="smbBtn"><input type="submit" value="Hire"></input></div>
+        <div className="smbBtn"><input type="submit" value="Hire" onClick={handleSubmit}></input></div>
         
     </form>
     </div>

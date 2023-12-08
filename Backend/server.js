@@ -134,3 +134,77 @@ app.put("/api/updateEmployee/:employeeId", async (req, res) => {
     }
   }
 });
+
+//
+//=============================================================================
+//Send Hire form
+//=============================================================================
+//
+app.post("/api/hireEmployee", async (req, res) => {
+  console.log("Received request:", req);
+  console.log("Request body:", req.body);
+  const {
+    p_first_name,
+    p_last_name,
+    p_email,
+    p_salary,
+    p_hire_date,
+    p_phone,
+    p_job_id,
+    p_manager_id,
+    p_department_id,
+  } = req.body;
+  console.log("Received data for hiring employee:");
+  console.log("First Name:", p_first_name);
+  console.log("Last Name:", p_last_name);
+  console.log("Email:", p_email);
+  console.log("Salary:", p_salary);
+  console.log("Hire Date:", p_hire_date);
+  console.log("Phone:", p_phone);
+  console.log("Job ID:", p_job_id);
+  console.log("Manager ID:", p_manager_id);
+  console.log("Department ID:", p_department_id);
+  let conn;
+
+  try {
+    console.log("Before connection");
+    conn = await createDatabaseConnection();
+
+    // Call the stored procedure
+    const result = await conn.execute(
+      `
+      BEGIN
+        Employee_hire_sp(
+          :p_first_name,
+          :p_last_name,
+          :p_email,
+          :p_salary,
+          TO_DATE(:p_hire_date, 'YYYY-MM-DD'),
+          :p_phone,
+          :p_job_id,
+          :p_manager_id,
+          :p_department_id
+        );
+      END;
+      `,
+      {
+        p_first_name: p_first_name,
+        p_last_name: p_last_name,
+        p_email: p_email,
+        p_salary: p_salary,
+        p_hire_date: p_hire_date,
+        p_phone: p_phone,
+        p_job_id: p_job_id,
+        p_manager_id: p_manager_id,
+        p_department_id: p_department_id,
+      }
+    );
+
+    res.json({ success: true, message: "Employee hired successfully" });
+  } catch (err) {
+    console.error("Error hiring employee:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  } finally {
+    await conn.close();
+  }
+});
