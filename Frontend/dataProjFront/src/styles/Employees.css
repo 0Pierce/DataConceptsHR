@@ -1,26 +1,67 @@
 .employeeBody {
   position: relative;
   width: 100%;
-  height: 100vh;
+
   margin: 0px;
+}
+
+.editEmployeesBody {
+  position: relative;
+  width: 100%;
+  height: 800px;
+  background-color: aqua;
+  display: flex;
+}
+
+.employeeList {
+  width: 20%;
+  background-color: rgb(57, 5, 103);
+}
+.employeeList ul {
+  max-height: 780px; /* Adjust the value as needed */
+  overflow-y: auto;
+}
+
+.employeeList li:hover {
+  color: rgb(72, 255, 0);
+  cursor: pointer;
+}
+
+.editEmployeeForm {
+  width: 80%;
+  background-color: rgb(1, 0, 70);
+  text-align: center;
+}
+
+.editEmployeeForm input {
+  height: 20px;
+  margin-left: 5px;
+}
+
+.editEmployeeForm label {
+  margin-left: 25px;
+}
+
+.empFields {
+  display: flex;
+}
+
+.empField {
+  display: block;
 }
 
 .employeeForm {
   width: 800px;
-  height: 400px;
+  height: 450px;
   background-color: rgba(255, 255, 255, 0.217);
-  position: absolute;
-  top: 20%;
+  position: relative;
+
   left: 50%;
-  transform: translate(-50%, -20%);
+  transform: translate(-50%, 0%);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-}
-
-.employeeForm {
-  margin-top: 0px;
-  position: relative;
   text-align: center;
+  margin-top: 0px;
 }
 
 .employeeForm input::-webkit-outer-spin-button,
@@ -91,7 +132,14 @@
 }
 
 .manInfo {
-  margin-top: 20px;
+  margin-top: 30px;
+}
+.manInfo h3 {
+  text-align: left;
+  margin-left: 50px;
+  margin-bottom: 10px;
+}
+.manInfoContent {
   display: flex;
   position: relative;
   width: 80%;
