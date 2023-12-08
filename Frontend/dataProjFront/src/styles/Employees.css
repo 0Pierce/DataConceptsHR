@@ -42,6 +42,10 @@
   margin-left: 25px;
 }
 
+.editEmployeeForm button {
+  margin-top: 20px;
+}
+
 .empFields {
   display: flex;
 }

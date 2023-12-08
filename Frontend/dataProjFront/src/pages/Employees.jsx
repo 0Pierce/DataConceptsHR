@@ -24,7 +24,7 @@ function Employees() {
     const [deptName, setdeptName] = useState([])
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [selectedEmployeeName, setSelectedEmployeeName] = useState('');
-    useEffect(() => {
+    
         const fetchJobIds = async () => {
           try {
             const response = await fetch('/api');
@@ -68,8 +68,9 @@ function Employees() {
           }
         };
       
-        fetchJobIds();
-      }, []);
+        useEffect(() => {
+          fetchJobIds();
+        }, []);
 
       function editEmployee(id){
         console.log(id);
@@ -78,6 +79,56 @@ function Employees() {
     
         setSelectedEmployee(clickedEmployee);
         setSelectedEmployeeName(`${clickedEmployee?.fName} ${clickedEmployee?.lName}`);
+      }
+
+      function changeEmployeeData(){
+        if (!selectedEmployee) {
+          console.error("No employee selected for update.");
+          return;
+        }
+      
+        const newSalary = document.getElementById("newSalary").value;
+        const newEmail = document.getElementById("newEmail").value;
+        const newPhone = document.getElementById("newPhone").value;
+      
+        // Make sure at least one field has a new value
+        if (!newSalary && !newEmail && !newPhone) {
+          console.error("No changes provided.");
+          return;
+        }
+      
+        const updateData = {};
+      
+        if (newSalary) {
+          updateData.salary = newSalary;
+        }
+      
+        if (newEmail) {
+          updateData.email = newEmail;
+        }
+      
+        if (newPhone) {
+          updateData.phone = newPhone;
+        }
+      
+        // Make the API request
+        fetch(`/api/updateEmployee/:${selectedEmployee.employee_ID}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updateData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data); 
+          
+            fetchJobIds();
+          })
+          .catch((error) => {
+            console.error("Error updating employee data:", error);
+          });
+
       }
 
   return (
@@ -104,23 +155,23 @@ function Employees() {
               <div className="empField">
              
               <input type="text" placeholder="Salary" id='salary' value={selectedEmployee?.salary ?? 'Null'} />
-              <input type="text" name="" id="" placeholder='new Salary' />
+              <input type="text" name="" id="newSalary" placeholder='new Salary' />
               </div>
               <label htmlFor="email">Email:</label>
               <div className="empField">
              
               <input type="text" placeholder="Email" id='email' value={selectedEmployee?.email ?? 'Null'} />
-              <input type="text" name="" id="" placeholder='new Email' />
+              <input type="text" name="" id="newEmail" placeholder='new Email' />
               </div>
               <label htmlFor="phone">Phone:</label>
               <div className="empField">
               <input type="text" placeholder="Phone" id='phone' value={selectedEmployee?.phone_Num ?? 'Null'} />
-              <input type="text" name="" id="" placeholder='new Phone' />
+              <input type="text" name="" id="newPhone" placeholder='new Phone' />
               </div>
           </div>
 
           
-
+          <button onClick={changeEmployeeData}>Confirm Changes</button>
         </div>
         </div>
 

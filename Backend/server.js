@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+app.use(express.json());
 const port = 5000;
 
 app.listen(port, () => {
@@ -18,8 +19,9 @@ const config = {
 };
 
 //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-const conn = 0;
+
 async function getDatabaseConnection() {
+  //const conn = 0;
   try {
     const conn = await oracledb.getConnection(config);
     console.log("Connected to the School database!");
@@ -72,5 +74,49 @@ app.get("/api", async (req, res) => {
     res.json({ Employees: HR_Employees });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+//
+//=============================================================================
+//Update Employee Data
+//=============================================================================
+//
+app.put("/api/updateEmployee/:employeeId", async (req, res) => {
+  const employeeId = req.params.employeeId;
+  const { salary, email, phone } = req.body;
+
+  try {
+    const conn = await oracledb.getConnection(config);
+    const updateQuery = `
+      UPDATE HR_EMPLOYEES
+      SET SALARY = :salary, EMAIL = :email, PHONE_NUM = :phone
+      WHERE EMPLOYEE_ID = :employeeId
+    `;
+
+    const bindParams = {
+      salary,
+      email,
+      phone,
+      employeeId,
+    };
+
+    const updatedata = await conn.execute(updateQuery, bindParams, {
+      autoCommit: true,
+    });
+
+    res.json({ success: true, message: "Employee data updated successfully" });
+  } catch (err) {
+    console.error("Error updating employee data:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error updating employee data:", err.message);
+  } finally {
+    try {
+      if (conn) {
+        await conn.close();
+        console.log("Connection closed.");
+      }
+    } catch (err) {
+      console.error("Error closing connection:", err);
+    }
   }
 });
