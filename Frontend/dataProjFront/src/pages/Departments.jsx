@@ -3,15 +3,37 @@ import React, { useState, useEffect } from 'react';
 const DepartmentsMenu = () => {
   const [departments, setDepartments] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [HR_Employees, setHR_Employees] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://199.212.26.208:1521/SQLD');
+        const response = await fetch('http://199.212.26.208:1521/SQLD/departments');
         const data = await response.json();
         setDepartments(data);
+
+        const mappedEmployees = data.map((row) => ({
+          employee_ID: row[0],
+          fName: row[1],
+          lName: row[2],
+          email: row[3],
+          phone_Num: row[4],
+          hire_Date: row[5],
+          job_ID: row[6],
+          salary: row[7],
+          comm: row[8],
+          manager_ID: row[9],
+          dept_ID: row[10],
+          job_Title: row[11],
+          min_Salary: row[12],
+          max_Salary: row[13],
+          dept_Name: row[14],
+          location_ID: row[15],
+        }));
+
+        setHR_Employees(mappedEmployees);
       } catch (error) {
-        console.error('Error fetching departments:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
@@ -46,6 +68,7 @@ const DepartmentsMenu = () => {
         {selectedDepartment && (
           <div>
             <h2>{selectedDepartment}</h2>
+            {/* Display HR_Employees data here as needed */}
           </div>
         )}
       </div>
