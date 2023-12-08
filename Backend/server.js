@@ -19,12 +19,22 @@ const config = {
 };
 
 //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-
-async function getDatabaseConnection() {
-  //const conn = 0;
+async function createDatabaseConnection() {
   try {
     const conn = await oracledb.getConnection(config);
     console.log("Connected to the School database!");
+    return conn;
+  } catch (err) {
+    console.log("Connection error:", err);
+    throw err;
+  }
+}
+
+async function getDatabaseConnection() {
+  let conn;
+
+  try {
+    conn = await createDatabaseConnection();
     const query = `
     SELECT E.*, J.*, D.*
     FROM HR_EMPLOYEES E
@@ -50,7 +60,7 @@ async function getDatabaseConnection() {
       max_Salary: row[14],
       location_ID: row[15],
     }));
-    console.log(HR_Employees);
+    //console.log(HR_Employees);
     return HR_Employees;
   } catch (err) {
     console.log("Connection error:", err);
@@ -70,7 +80,7 @@ async function getDatabaseConnection() {
 app.get("/api", async (req, res) => {
   try {
     const HR_Employees = await getDatabaseConnection();
-    console.log("Ordered HR Employees:", HR_Employees);
+    // console.log("Ordered HR Employees:", HR_Employees);
     res.json({ Employees: HR_Employees });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
@@ -82,14 +92,18 @@ app.get("/api", async (req, res) => {
 //=============================================================================
 //
 app.put("/api/updateEmployee/:employeeId", async (req, res) => {
+  console.log("2");
   const employeeId = req.params.employeeId;
   const { salary, email, phone } = req.body;
-
+  console.log("1");
+  const conn = null;
   try {
-    const conn = await oracledb.getConnection(config);
+    console.log("Before DB connectio");
+    const conn = await createDatabaseConnection();
+    console.log("Connected to DB");
     const updateQuery = `
       UPDATE HR_EMPLOYEES
-      SET SALARY = :salary, EMAIL = :email, PHONE_NUM = :phone
+      SET SALARY = :salary, EMAIL = :email, PHONE_NUMBER = :phone
       WHERE EMPLOYEE_ID = :employeeId
     `;
 
@@ -99,11 +113,11 @@ app.put("/api/updateEmployee/:employeeId", async (req, res) => {
       phone,
       employeeId,
     };
-
+    console.log("Before execute");
     const updatedata = await conn.execute(updateQuery, bindParams, {
       autoCommit: true,
     });
-
+    console.log("After execute");
     res.json({ success: true, message: "Employee data updated successfully" });
   } catch (err) {
     console.error("Error updating employee data:", err);

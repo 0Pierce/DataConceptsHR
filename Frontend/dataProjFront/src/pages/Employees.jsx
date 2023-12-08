@@ -112,7 +112,7 @@ function Employees() {
         }
       
         // Make the API request
-        fetch(`/api/updateEmployee/:${selectedEmployee.employee_ID}`, {
+        fetch(`/api/updateEmployee/${selectedEmployee.employee_ID}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
