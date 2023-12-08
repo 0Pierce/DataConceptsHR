@@ -14,7 +14,7 @@ function Employees() {
   are working on the project.
    */
   //==============================================
-  const [data, setData] = useState(null); // Define data state
+  const [data, setData] = useState(null);
     const [jobIds, setJobIds] = useState([]);
     const [jobTitles, setJobTitles] = useState([])
     const [employeeID, setEmployeeID] = useState([])
