@@ -13,6 +13,8 @@ function Jobs() {
   const [maxSalary, setMaxSalary] = useState([]);
   const [data, setData] = useState(null);
 
+  const [jobsData, setJobsData] = useState([]);
+
   const [jobIds, setJobIds] = useState([]);
 //JOB ID, JOB TITLE, MINSALARYU, MAXSALARY
   useEffect(() => {
@@ -21,7 +23,7 @@ function Jobs() {
         const response = await fetch('/api');
         const data = await response.json();
         setData(data);
-
+        setJobsData(data.Employees);
         const uniqueJobID = new Set(data.Employees.map(employee => employee.job_ID));
         const uniqueJobIDArray = [...uniqueJobID];
         setJobID(uniqueJobIDArray);
@@ -66,19 +68,26 @@ function Jobs() {
     }
   }
 
-  function updateColumn(updatedData) {
-    
-    console.log('Updating database:', updatedData);
 
-    fetch(`/api/updateJob/${updatedData.job_ID}`, {
+  const handleInputChange = (e, index, columnName) => {
+    const updatedData = [...jobsData];
+    updatedData[index][columnName] = e.target.value;
+    setJobsData(updatedData);
+    updateColumn(updatedData[index]);  // Pass the updated row to the function
+  };
+
+
+
+  function updateColumn(updatedRow) {
+    console.log('Updating database:', updatedRow);
+    
+    fetch(`/api/updateJob`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        newJobTitle: updatedData.job_Title,  
-        newMinSalary: updatedData.min_Salary, 
-        newMaxSalary: updatedData.max_Salary, 
+        updatedData: updatedRow,
       }),
     })
       .then(response => response.json())
@@ -127,12 +136,7 @@ function Jobs() {
       <ul>
     {jobTitles.map((id, index) => (
       <li key={id}>
-        <input type="text" defaultValue= {jobTitles[index]}  onChange={(e) => {
-                        const updatedData = [...jobTitles];
-                        updatedData[index] = e.target.value;
-                        setJobTitles(updatedData);
-                        updateColumn(updatedData);
-                      }}  />
+        <input type="text" defaultValue={jobTitles[index]} onChange={(e) => handleInputChange(e, index, 'job_Title')} />
        
       </li>
     ))}
@@ -144,12 +148,7 @@ function Jobs() {
     {minSalary.map((id, index) => (
       <li key={id}>
       
-        <input type="text" defaultValue=   {minSalary[index]}  onChange={(e) => {
-                        const updatedData = [...minSalary];
-                        updatedData[index] = e.target.value;
-                        setMinSalary(updatedData);
-                        updateColumn(updatedData);
-                      }}   />
+        <input type="text" defaultValue=   {minSalary[index]}  onChange={(e) => handleInputChange(e, index, 'min_Salary')}  />
       </li>
     ))}
   </ul>
@@ -160,12 +159,7 @@ function Jobs() {
     {maxSalary.map((id, index) => (
       <li key={id}>
        
-        <input type="text" defaultValue=    {maxSalary[index]} onChange={(e) => {
-                        const updatedData = [...maxSalary];
-                        updatedData[index] = e.target.value;
-                        setMaxSalary(updatedData);
-                        updateColumn(updatedData);
-                      }}   />
+        <input type="text" defaultValue=    {maxSalary[index]} onChange={(e) => handleInputChange(e, index, 'max_Salary')} />
       </li>
     ))}
   </ul>

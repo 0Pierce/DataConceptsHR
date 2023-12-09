@@ -214,31 +214,36 @@ app.post("/api/hireEmployee", async (req, res) => {
 //Update HR Colums - from Jobs Menu
 //=============================================================================
 //
-app.put("/api/updateJob/:jobId", async (req, res) => {
+app.put("/api/updateJob", async (req, res) => {
   console.log("Updating");
 
-  const { newJobTitle, newMinSalary, newMaxSalary } = req.body;
+  const { updatedData } = req.body;
   const conn = null;
+
   try {
     const conn = await createDatabaseConnection();
 
     const updateQuery = `
       UPDATE HR_JOBS
       SET JOB_TITLE = :newJobTitle, MIN_SALARY = :newMinSalary, MAX_SALARY = :newMaxSalary
-      
+      WHERE JOB_ID = :jobId
     `;
 
     const bindParams = {
-      newJobTitle,
-      newMinSalary,
-      newMaxSalary,
+      newJobTitle: updatedData.job_Title,
+      newMinSalary: updatedData.min_Salary,
+      newMaxSalary: updatedData.max_Salary,
+      jobId: updatedData.job_ID,
     };
+
     console.log("Update Query:", updateQuery);
     console.log("Bind Params:", bindParams);
     console.log("Before execute");
+
     await conn.execute(updateQuery, bindParams, {
       autoCommit: true,
     });
+
     console.log("After execute");
     res.json({ success: true, message: "Job data updated successfully" });
   } catch (err) {
