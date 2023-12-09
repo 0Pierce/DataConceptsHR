@@ -60,7 +60,7 @@ async function getDatabaseConnection() {
       max_Salary: row[14],
       location_ID: row[15],
     }));
-    //console.log(HR_Employees);
+    // console.log(HR_Employees);
     return HR_Employees;
   } catch (err) {
     console.log("Connection error:", err);
@@ -88,7 +88,7 @@ app.get("/api", async (req, res) => {
 });
 //
 //=============================================================================
-//Update Employee Data
+//Update Employee Data - Employees Page
 //=============================================================================
 //
 app.put("/api/updateEmployee/:employeeId", async (req, res) => {
@@ -137,7 +137,7 @@ app.put("/api/updateEmployee/:employeeId", async (req, res) => {
 
 //
 //=============================================================================
-//Send Hire form
+//Send Hire form - Employees Page
 //=============================================================================
 //
 app.post("/api/hireEmployee", async (req, res) => {
@@ -206,5 +206,47 @@ app.post("/api/hireEmployee", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   } finally {
     await conn.close();
+  }
+});
+
+//
+//=============================================================================
+//Update HR Colums - from Jobs Menu
+//=============================================================================
+//
+app.put("/api/updateJob/:jobId", async (req, res) => {
+  console.log("Updating");
+
+  const { newJobTitle, newMinSalary, newMaxSalary } = req.body;
+  const conn = null;
+  try {
+    const conn = await createDatabaseConnection();
+
+    const updateQuery = `
+      UPDATE HR_JOBS
+      SET JOB_TITLE = :newJobTitle, MIN_SALARY = :newMinSalary, MAX_SALARY = :newMaxSalary
+      
+    `;
+
+    const bindParams = {
+      newJobTitle,
+      newMinSalary,
+      newMaxSalary,
+    };
+    console.log("Update Query:", updateQuery);
+    console.log("Bind Params:", bindParams);
+    console.log("Before execute");
+    await conn.execute(updateQuery, bindParams, {
+      autoCommit: true,
+    });
+    console.log("After execute");
+    res.json({ success: true, message: "Job data updated successfully" });
+  } catch (err) {
+    console.error("Error updating job data:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  } finally {
+    if (conn) {
+      await conn.close();
+    }
   }
 });
