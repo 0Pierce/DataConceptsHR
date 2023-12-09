@@ -8,10 +8,23 @@ const DepartmentsMenu = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://199.212.26.208:1521/SQLD/departments');
+        const response = await fetch('/api/departments');
         const data = await response.json();
         setDepartments(data);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+      }
+    };
 
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchEmployeeData = async () => {
+      try {
+        const response = await fetch(`/api/employees/${selectedDepartment}`);
+        const data = await response.json();
+        
         const mappedEmployees = data.map((row) => ({
           employee_ID: row[0],
           fName: row[1],
@@ -33,12 +46,14 @@ const DepartmentsMenu = () => {
 
         setHR_Employees(mappedEmployees);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching employee data:', error);
       }
     };
 
-    fetchData();
-  }, []);
+    if (selectedDepartment) {
+      fetchEmployeeData();
+    }
+  }, [selectedDepartment]);
 
   const handleDepartmentChange = (event) => {
     setSelectedDepartment(event.target.value);
@@ -68,7 +83,21 @@ const DepartmentsMenu = () => {
         {selectedDepartment && (
           <div>
             <h2>{selectedDepartment}</h2>
-            {/* Display HR_Employees data here as needed */}
+            {HR_Employees.length > 0 ? (
+              <ul>
+                {HR_Employees.map((employee) => (
+                  <li key={employee.employee_ID}>
+                    <strong>{employee.fName} {employee.lName}</strong> - {employee.job_Title}
+                    <br />
+                    Email: {employee.email}, Phone: {employee.phone_Num}
+                    <br />
+                    Hire Date: {employee.hire_Date}, Salary: {employee.salary}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No employee data available for this department.</p>
+            )}
           </div>
         )}
       </div>
