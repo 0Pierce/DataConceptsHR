@@ -8,7 +8,7 @@ const DepartmentsMenu = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/departments');
+        const response = await fetch('http://localhost:5173/api/departments');
         const data = await response.json();
         setDepartments(data);
       } catch (error) {
@@ -22,9 +22,9 @@ const DepartmentsMenu = () => {
   useEffect(() => {
     const fetchEmployeeData = async () => {
       try {
-        const response = await fetch(`/api/employees/${selectedDepartment}`);
+        const response = await fetch(`http://localhost:5173/api/employees/${selectedDepartment}`);
         const data = await response.json();
-        
+
         const mappedEmployees = data.map((row) => ({
           employee_ID: row[0],
           fName: row[1],
@@ -104,5 +104,8 @@ const DepartmentsMenu = () => {
     </div>
   );
 };
+
+export default DepartmentsMenu;
+
 
 export default DepartmentsMenu;
