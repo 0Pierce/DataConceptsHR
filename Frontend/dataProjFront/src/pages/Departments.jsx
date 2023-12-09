@@ -6,18 +6,52 @@ const DepartmentsMenu = () => {
   const [HR_Employees, setHR_Employees] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5173/api/departments')
-      .then(response => response.json())
-      .then(data => setDepartments(data))
-      .catch(error => console.error('Error fetching departments:', error));
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:5173/api/departments');
+        const data = await response.json();
+        setDepartments(data);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
+    const fetchEmployeeData = async () => {
+      try {
+        const response = await fetch(`http://localhost:5173/api/employees/${selectedDepartment}`);
+        const data = await response.json();
+
+        const mappedEmployees = data.map((row) => ({
+          employee_ID: row[0],
+          fName: row[1],
+          lName: row[2],
+          email: row[3],
+          phone_Num: row[4],
+          hire_Date: row[5],
+          job_ID: row[6],
+          salary: row[7],
+          comm: row[8],
+          manager_ID: row[9],
+          dept_ID: row[10],
+          job_Title: row[11],
+          min_Salary: row[12],
+          max_Salary: row[13],
+          dept_Name: row[14],
+          location_ID: row[15],
+        }));
+
+        setHR_Employees(mappedEmployees);
+      } catch (error) {
+        console.error('Error fetching employee data:', error);
+      }
+    };
+
     if (selectedDepartment) {
-      fetch(`http://localhost:5173/api/employees/${selectedDepartment}`)
-        .then(response => response.json())
-        .then(data => setHR_Employees(data))
-        .catch(error => console.error('Error fetching employees:', error));
+      fetchEmployeeData();
     }
   }, [selectedDepartment]);
 
@@ -72,4 +106,6 @@ const DepartmentsMenu = () => {
 };
 
 export default DepartmentsMenu;
+
+
 
