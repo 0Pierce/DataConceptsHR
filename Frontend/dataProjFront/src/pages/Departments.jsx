@@ -6,41 +6,52 @@ const DepartmentsMenu = () => {
   const [HR_Employees, setHR_Employees] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/departments')
-      .then(response => response.json())
-      .then(data => setDepartments(data))
-      .catch(error => console.error('Error fetching departments:', error));
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://199.212.26.208:1521/SQLD/departments');
+        const data = await response.json();
+        setDepartments(data);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
+    const fetchEmployeeData = async () => {
+      try {
+        const response = await fetch(`http://199.212.26.208:1521/SQLD/employees/${selectedDepartment}`);
+        const data = await response.json();
+
+        const mappedEmployees = data.map(row => ({
+          employee_ID: row.employee_ID,
+          fName: row.fName,
+          lName: row.lName,
+          email: row.email,
+          phone_Num: row.phone_Num,
+          hire_Date: row.hire_Date,
+          job_ID: row.job_ID,
+          salary: row.salary,
+          comm: row.comm,
+          manager_ID: row.manager_ID,
+          dept_ID: row.dept_ID,
+          job_Title: row.job_Title,
+          min_Salary: row.min_Salary,
+          max_Salary: row.max_Salary,
+          dept_Name: row.dept_Name,
+          location_ID: row.location_ID,
+        }));
+
+        setHR_Employees(mappedEmployees);
+      } catch (error) {
+        console.error('Error fetching employee data:', error);
+      }
+    };
+
     if (selectedDepartment) {
-      fetch(`http://localhost:5000/api/employees/${selectedDepartment}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data && data.length > 0) {
-            setHR_Employees(data.map(row => ({
-              employee_ID: row.employee_ID,
-              fName: row.fName,
-              lName: row.lName,
-              email: row.email,
-              phone_Num: row.phone_Num,
-              hire_Date: row.hire_Date,
-              job_ID: row.job_ID,
-              salary: row.salary,
-              comm: row.comm,
-              manager_ID: row.manager_ID,
-              dept_ID: row.dept_ID,
-              job_Title: row.job_Title,
-              min_Salary: row.min_Salary,
-              max_Salary: row.max_Salary,
-              dept_Name: row.dept_Name,
-              location_ID: row.location_ID,
-            })));
-          } else {
-            setHR_Employees([]);
-          }
-        })
-        .catch(error => console.error('Error fetching employees:', error));
+      fetchEmployeeData();
     }
   }, [selectedDepartment]);
 
@@ -95,3 +106,4 @@ const DepartmentsMenu = () => {
 };
 
 export default DepartmentsMenu;
+
