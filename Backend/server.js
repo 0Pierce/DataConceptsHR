@@ -13,7 +13,7 @@ app.listen(port, () => {
 //
 const oracledb = require("oracledb");
 const config = {
-  user: "COMP214_F23_ers_33",
+  user: "COMP214_f23_ers_22",
   password: "password",
   connectString: "199.212.26.208:1521/SQLD",
 };
